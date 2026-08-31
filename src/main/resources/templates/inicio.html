@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Inicio</title>
+
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+
+<body>
+
+    <div class="contenedor">
+
+        <div class="tarjeta">
+
+            <div class="lado-logo">
+
+                <img src="/images/logo.png"
+                     alt="Logo"
+                     class="logo">
+
+                <h1>Sistema de</h1>
+                <h1>Identidad Digital</h1>
+
+            </div>
+
+            <div class="lado-login">
+
+                <h2>Bienvenido</h2>
+
+                <p class="subtitulo">
+                    Hola, <strong th:text="${nombre}"></strong>
+                </p>
+
+                <p>
+                    Has iniciado sesión correctamente.
+                </p>
+
+                <form method="post" action="/logout">
+
+                    <input type="hidden"
+                           th:name="${_csrf.parameterName}"
+                           th:value="${_csrf.token}">
+
+                    <button type="submit" class="boton">
+                        Cerrar sesión
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
