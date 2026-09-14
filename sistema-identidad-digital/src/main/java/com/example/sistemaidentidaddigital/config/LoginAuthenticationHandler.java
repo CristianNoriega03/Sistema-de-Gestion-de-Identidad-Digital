@@ -1,5 +1,7 @@
 package com.example.sistemaidentidaddigital.config;
 
+import com.example.sistemaidentidaddigital.abstractfactory.LoginAbstractFactory;
+import com.example.sistemaidentidaddigital.abstractfactory.RegistroAuditoria;
 import com.example.sistemaidentidaddigital.factory.Notificacion;
 import com.example.sistemaidentidaddigital.factory.NotificacionFactory;
 import com.example.sistemaidentidaddigital.util.LoginManager;
@@ -28,13 +30,22 @@ public class LoginAuthenticationHandler
             HttpServletRequest request,
             HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
+            
+        String email = authentication.getName();
 
         // 1. Logeo Exitoso Singleton 
-        loginManager.registrarInicioSesion(authentication.getName());
+        loginManager.registrarInicioSesion(email);
 
-        // 2. Factory Method crea la notificación de Éxito
-        Notificacion alerta = NotificacionFactory.crearNotificacion("EXITO");
-        request.getSession().setAttribute("notificacionFlotante", alerta);
+        // 2. Factory Method decide la fábrica abstracta
+        LoginAbstractFactory fabrica = NotificacionFactory.obtenerFamilia("EXITO");
+        
+        // 3. Abstract Factory genera en paralelo la UI y la Auditoría
+        RegistroAuditoria logAuditoria = fabrica.crearAuditoria(email);
+        Notificacion alertaUI = fabrica.crearNotificacionUI();
+
+        // Guardamos la auditoría en consola y enviamos la UI a la pantalla
+        System.out.println(logAuditoria.generarLog());
+        request.getSession().setAttribute("notificacionFlotante", alertaUI);
 
         response.sendRedirect("/");
     }
@@ -51,9 +62,16 @@ public class LoginAuthenticationHandler
         // 1. Logeo Fallo Singleton 
         loginManager.registrarIntentoFallido(email);
 
-        // 2. Factory Method crea la notificación de Fallo
-        Notificacion alerta = NotificacionFactory.crearNotificacion("FALLO");
-        request.getSession().setAttribute("notificacionFlotante", alerta);
+        // 2. Factory Method decide la fábrica abstracta
+        LoginAbstractFactory fabrica = NotificacionFactory.obtenerFamilia("FALLO");
+        
+        // 3. Abstract Factory genera en paralelo la UI y la Auditoría
+        RegistroAuditoria logAuditoria = fabrica.crearAuditoria(email);
+        Notificacion alertaUI = fabrica.crearNotificacionUI();
+
+        // Guardamos la auditoría en consola y enviamos la UI a la pantalla
+        System.out.println(logAuditoria.generarLog());
+        request.getSession().setAttribute("notificacionFlotante", alertaUI);
 
         response.sendRedirect("/login?error=true");
     }

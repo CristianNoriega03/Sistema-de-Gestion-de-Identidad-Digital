@@ -1,5 +1,7 @@
 package com.example.sistemaidentidaddigital.config;
 
+import com.example.sistemaidentidaddigital.abstractfactory.LoginAbstractFactory;
+import com.example.sistemaidentidaddigital.abstractfactory.RegistroAuditoria;
 import com.example.sistemaidentidaddigital.factory.Notificacion;
 import com.example.sistemaidentidaddigital.factory.NotificacionFactory;
 import com.example.sistemaidentidaddigital.service.CustomUserDetailsService;
@@ -45,13 +47,23 @@ public class SecurityConfig {
 
             .logout(logout -> logout
                 .logoutSuccessHandler((request, response, authentication) -> {
-                    //Factory Method crea la notificación de Cierre de Sesión
-                    Notificacion alerta = NotificacionFactory.crearNotificacion("LOGOUT");
                     
-                    //Se guarda en la nueva sesión limpia creada tras el logout
-                    request.getSession().setAttribute("notificacionFlotante", alerta);
+                    // Obtenemos el email si existe, sino lo dejamos como "Desconocido"
+                    String email = (authentication != null && authentication.getName() != null) 
+                                    ? authentication.getName() 
+                                    : "Desconocido";
+
+                    // 1. Factory Method decide la fábrica abstracta
+                    LoginAbstractFactory fabrica = NotificacionFactory.obtenerFamilia("LOGOUT");
+
+                    // 2. Abstract Factory genera en paralelo la UI y la Auditoría
+                    RegistroAuditoria logAuditoria = fabrica.crearAuditoria(email);
+                    Notificacion alertaUI = fabrica.crearNotificacionUI();
+
+                    // 3. Imprimimos el log y mandamos la notificación azul a la vista
+                    System.out.println(logAuditoria.generarLog());
+                    request.getSession().setAttribute("notificacionFlotante", alertaUI);
                     
-                    //Redirige al login
                     response.sendRedirect("/login");
                 })
                 .permitAll()

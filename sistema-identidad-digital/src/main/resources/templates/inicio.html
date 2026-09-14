@@ -43,9 +43,10 @@
                     Hola, <strong th:text="${nombre}"></strong>
                 </p>
 
-                <p>
-                    Has iniciado sesión correctamente.
-                </p>
+                <!-- NUEVO BOTÓN: MI CARNÉ DIGITAL -->
+                <a th:href="@{/perfil}" class="boton" style="display: block; text-align: center; text-decoration: none; margin-bottom: 15px;">
+                    Mi Carné Digital
+                </a>
 
                 <form method="post" action="/logout">
 
@@ -53,7 +54,7 @@
                            th:name="${_csrf.parameterName}"
                            th:value="${_csrf.token}">
 
-                    <button type="submit" class="boton">
+                    <button type="submit" class="boton" style="background-color: #dc2626;">
                         Cerrar sesión
                     </button>
 

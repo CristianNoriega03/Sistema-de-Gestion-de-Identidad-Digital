@@ -13,3 +13,4 @@ public interface CiudadanoRepository extends JpaRepository<Ciudadano, Long> {
 
     boolean existsByEmail(String email);
 }
+

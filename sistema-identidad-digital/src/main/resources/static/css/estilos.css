@@ -344,3 +344,94 @@ body {
 .toast-info { 
     background-color: #3498db; 
 }
+
+
+
+/* =========================
+   CARNÉ DIGITAL (PROTOTYPE)
+   ========================= */
+
+.tarjeta-carne {
+    max-width: 600px;
+    margin: 0 auto;
+    display: block; /* Anula el flexbox de dos columnas del login */
+    padding: 0;
+}
+
+.carne-header {
+    background-color: #1e40af; 
+    color: white;
+    padding: 20px 30px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.carne-header img {
+    width: 75px;
+    height: 75px;
+    object-fit: contain;
+}
+
+.carne-header-text h3 {
+    margin: 0 0 5px 0;
+    font-size: 20px;
+}
+
+.carne-header-text h4 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: normal;
+    opacity: 0.9;
+}
+
+.carne-body {
+    padding: 35px 30px;
+}
+
+.carne-body h2 {
+    color: #1e293b;
+    font-size: 24px;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+}
+
+.datos-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    background: #f1f5f9;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+}
+
+.dato-item label {
+    display: block;
+    font-size: 12px;
+    color: #64748b;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+.dato-item span {
+    font-size: 17px;
+    color: #0f172a;
+    font-weight: bold;
+}
+
+.carne-footer {
+    background: #f8fafc;
+    padding: 20px 30px;
+    font-size: 12px;
+    color: #94a3b8;
+    border-top: 1px solid #e2e8f0;
+    text-align: center;
+}
+
+.acciones {
+    padding: 25px;
+    text-align: center;
+    background: white;
+}

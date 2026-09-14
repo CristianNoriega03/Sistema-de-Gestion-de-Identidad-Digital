@@ -56,7 +56,6 @@
 
                 <div class="campo">
                     <label for="nombre">Nombre</label>
-
                     <input
                         type="text"
                         id="nombre"
@@ -67,7 +66,6 @@
 
                 <div class="campo">
                     <label for="apellido">Apellido</label>
-
                     <input
                         type="text"
                         id="apellido"
@@ -78,7 +76,6 @@
 
                 <div class="campo">
                     <label for="documento">Documento</label>
-
                     <input
                         type="text"
                         id="documento"
@@ -87,11 +84,18 @@
                         required>
                 </div>
 
+                <!-- Campo agregado: Fecha de expedición -->
                 <div class="campo">
-                    <label for="fechaNacimiento">
-                        Fecha de nacimiento
-                    </label>
+                    <label for="fechaExpedicion">Fecha de expedición</label>
+                    <input
+                        type="date"
+                        id="fechaExpedicion"
+                        name="fechaExpedicion"
+                        required>
+                </div>
 
+                <div class="campo">
+                    <label for="fechaNacimiento">Fecha de nacimiento</label>
                     <input
                         type="date"
                         id="fechaNacimiento"
@@ -101,7 +105,6 @@
 
                 <div class="campo">
                     <label for="telefono">Teléfono</label>
-
                     <input
                         type="tel"
                         id="telefono"
@@ -112,7 +115,6 @@
 
                 <div class="campo">
                     <label for="email">Correo electrónico</label>
-
                     <input
                         type="email"
                         id="email"
@@ -123,7 +125,6 @@
 
                 <div class="campo">
                     <label for="password">Contraseña</label>
-
                     <input
                         type="password"
                         id="password"
@@ -133,10 +134,7 @@
                 </div>
 
                 <div class="campo">
-                    <label for="confirmarPassword">
-                        Confirmar Contraseña
-                    </label>
-
+                    <label for="confirmarPassword">Confirmar Contraseña</label>
                     <input
                         type="password"
                         id="confirmarPassword"

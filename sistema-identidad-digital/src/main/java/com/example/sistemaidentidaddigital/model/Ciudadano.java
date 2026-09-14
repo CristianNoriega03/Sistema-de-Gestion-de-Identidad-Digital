@@ -15,11 +15,13 @@ public class Ciudadano {
     private String nombre;
     private String apellido;
     private String documento;
+    private String fechaExpedicion; // Nuevo campo para validar
     private String fechaNacimiento;
     private String telefono;
     private String email;
     private String password;
 
+    // Getters y Setters
     public Long getId() {
         return id;
     }
@@ -50,6 +52,14 @@ public class Ciudadano {
 
     public void setDocumento(String documento) {
         this.documento = documento;
+    }
+
+    public String getFechaExpedicion() {
+        return fechaExpedicion;
+    }
+
+    public void setFechaExpedicion(String fechaExpedicion) {
+        this.fechaExpedicion = fechaExpedicion;
     }
 
     public String getFechaNacimiento() {

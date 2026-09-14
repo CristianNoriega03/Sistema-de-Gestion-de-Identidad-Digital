@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Carné Digital</title>
+    
+    
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+
+<body>
+
+    <div class="contenedor">
+        
+        <div class="tarjeta tarjeta-carne">
+            
+            <!-- Cabecera institucional -->
+            <div class="carne-header">
+                <img th:src="@{${carne.escudo}}" alt="Escudo Oficial">
+                <div class="carne-header-text">
+                    <h3 th:text="${carne.republica}"></h3>
+                    <h4 th:text="${carne.entidad}"></h4>
+                </div>
+            </div>
+
+            <!-- Cuerpo dinámico -->
+            <div class="carne-body">
+                <h2 th:text="${carne.nombreCompleto}"></h2>
+                <div class="datos-grid">
+                    <div class="dato-item">
+                        <label>Cédula de Ciudadanía</label>
+                        <span th:text="${carne.cedula}"></span>
+                    </div>
+                    <div class="dato-item">
+                        <label>Fecha de Expedición</label>
+                        <span th:text="${carne.fechaExpedicion}"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pie con textos legales -->
+            <div class="carne-footer">
+                <p th:text="${carne.firmasLegales}"></p>
+            </div>
+
+            <!-- Botón de retorno -->
+            <div class="acciones">
+                <a th:href="@{/}" class="boton" style="display: inline-block; width: auto; padding: 12px 40px; text-decoration: none;">
+                    Volver al menu
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
