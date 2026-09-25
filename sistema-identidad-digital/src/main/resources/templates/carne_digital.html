@@ -45,11 +45,19 @@
                 <p th:text="${carne.firmasLegales}"></p>
             </div>
 
-            <!-- Botón de retorno -->
-            <div class="acciones">
-                <a th:href="@{/}" class="boton" style="display: inline-block; width: auto; padding: 12px 40px; text-decoration: none;">
+    <!-- Botones de acción agrupados y centrados -->
+            <div class="acciones" style="text-align: center; padding-top: 15px;">
+                
+                <!-- Botón Bridge -->
+                <a th:href="@{/perfil(diseno='texto')}" class="boton" style="display: block; width: 80%; margin: 0 auto 10px auto; background-color: #4b5563; text-decoration: none;">
+                    🖨️ Ver en Formato Imprimible
+                </a>
+
+                <!-- Botón Volver -->
+                <a th:href="@{/}" class="boton" style="display: block; width: 80%; margin: 0 auto; text-decoration: none;">
                     Volver al menu
                 </a>
+
             </div>
 
         </div>

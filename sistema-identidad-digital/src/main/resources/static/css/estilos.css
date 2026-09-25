@@ -435,3 +435,16 @@ body {
     text-align: center;
     background: white;
 }
+
+.toast-error {
+    background-color: #ef4444; /* Rojo de alerta */
+    color: white;
+    border: 1px solid #dc2626;
+}
+
+/* Y por si acaso el de éxito también sale blanco, ponle este: */
+.toast-success {
+    background-color: #10b981; /* Verde de éxito */
+    color: white;
+    border: 1px solid #059669;
+}
