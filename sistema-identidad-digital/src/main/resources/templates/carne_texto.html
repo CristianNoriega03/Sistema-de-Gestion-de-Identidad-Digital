@@ -3,34 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <title>Carné - Formato Imprimible</title>
-    <style>
-        body { font-family: monospace; padding: 40px; background-color: white; color: black; }
-        .carnet-impresion { border: 2px dashed black; padding: 20px; max-width: 500px; margin: 0 auto; }
-        h3 { text-align: center; border-bottom: 1px solid black; padding-bottom: 10px; }
-        .datos p { font-size: 16px; margin: 5px 0; }
-        .footer { font-size: 11px; text-align: justify; margin-top: 20px; border-top: 1px dashed black; padding-top: 10px;}
-        .botones { text-align: center; margin-top: 30px; }
-        a { text-decoration: none; border: 1px solid black; padding: 5px 15px; color: black; }
-    </style>
+    <!-- Vinculamos tu archivo de estilos principal -->
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
 </head>
-<body>
+<body class="body-impresion">
 
-    <div class="carnet-impresion">
-        <h3 th:text="${carne.republica} + ' - ' + ${carne.entidad}">REPÚBLICA</h3>
-        
-        <div class="datos">
-            <p><strong>NOMBRES Y APELLIDOS:</strong> <br> <span th:text="${carne.nombreCompleto}"></span></p>
-            <p><strong>NÚMERO DE DOCUMENTO (C.C.):</strong> <br> <span th:text="${carne.cedula}"></span></p>
-            <p><strong>FECHA DE EXPEDICIÓN:</strong> <br> <span th:text="${carne.fechaExpedicion}"></span></p>
+    <div class="contenedor-impresion">
+        <div class="carnet-impresion">
+            <h3 th:text="${carne.republica} + ' - ' + ${carne.entidad}">REPÚBLICA</h3>
+            
+            <div class="datos">
+                <p><strong>NOMBRES Y APELLIDOS:</strong> <br> <span th:text="${carne.nombreCompleto}"></span></p>
+                <p><strong>NÚMERO DE DOCUMENTO (C.C.):</strong> <br> <span th:text="${carne.cedula}"></span></p>
+                <p><strong>FECHA DE EXPEDICIÓN:</strong> <br> <span th:text="${carne.fechaExpedicion}"></span></p>
+            </div>
+
+            <div class="footer">
+                <p th:text="${carne.firmasLegales}"></p>
+            </div>
+
+            <!-- CAPA DE SEGURIDAD (PATRÓN DECORATOR) EN FORMATO TEXTO -->
+            <div class="seguridad-impresion">
+                <strong>Seguridad:</strong> <span th:text="${sellosSeguridad}"></span>
+            </div>
         </div>
 
-        <div class="footer">
-            <p th:text="${carne.firmasLegales}"></p>
+        <div class="botones">
+            <a th:href="@{/perfil(diseno='html')}">⬅ Volver al diseño a color</a>
         </div>
-    </div>
-
-    <div class="botones">
-        <a th:href="@{/perfil(diseno='html')}">⬅ Volver al diseño a color</a>
     </div>
 
 </body>

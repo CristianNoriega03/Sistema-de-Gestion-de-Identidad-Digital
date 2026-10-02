@@ -4,9 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Inicio</title>
-
     <link rel="stylesheet" th:href="@{/css/estilos.css}">
 </head>
 
@@ -21,24 +19,17 @@
 </div>
 
     <div class="contenedor">
-
         <div class="tarjeta">
-
             <div class="lado-logo">
-
                 <img th:src="@{/images/logo.png}"
                      alt="Logo"
                      class="logo">
-
                 <h1>Sistema de</h1>
                 <h1>Identidad Digital</h1>
-
             </div>
 
             <div class="lado-login">
-
                 <h2>Bienvenido</h2>
-
                 <p class="subtitulo">
                     Hola, <strong th:text="${nombre}"></strong>
                 </p>
@@ -47,27 +38,28 @@
                 <a th:href="@{/perfil}" class="boton" style="display: block; text-align: center; text-decoration: none; margin-bottom: 15px;">
                     Mi Carné Digital
                 </a>
+                
                 <!--Validar Documento -->
                 <a th:href="@{/validar-estado}" class="boton" style="display: block; text-align: center; text-decoration: none; margin-bottom: 15px; background-color: #0f172a; color: white;">
                     🛡️ Validar Estado de documento
                 </a>
 
-                <form method="post" action="/logout">
+                <!--GESTIÓN DE CITAS-->
+                <a th:href="@{/citas}" class="boton" style="display: block; text-align: center; text-decoration: none; margin-bottom: 15px; background-color: #0284c7; color: white;">
+                    📅 Renovacion de Documento
+                </a>
 
+                <!-- CERRAR SESIÓN -->
+                <form method="post" action="/logout">
                     <input type="hidden"
                            th:name="${_csrf.parameterName}"
                            th:value="${_csrf.token}">
-
                     <button type="submit" class="boton" style="background-color: #dc2626;">
                         Cerrar sesión
                     </button>
-
                 </form>
-
             </div>
-
         </div>
-
     </div>
 
     <!-- SCRIPT PARA DESAPARECER LA NOTIFICACIÓN EN 8 SEGUNDOS -->

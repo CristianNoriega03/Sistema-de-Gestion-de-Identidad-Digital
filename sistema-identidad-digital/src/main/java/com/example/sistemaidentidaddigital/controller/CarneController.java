@@ -4,6 +4,10 @@ import com.example.sistemaidentidaddigital.bridge.CarneBridge;
 import com.example.sistemaidentidaddigital.bridge.FormatoCarne;
 import com.example.sistemaidentidaddigital.bridge.FormatoHTML;
 import com.example.sistemaidentidaddigital.bridge.FormatoTexto;
+import com.example.sistemaidentidaddigital.decorator.CarnetBase;
+import com.example.sistemaidentidaddigital.decorator.CarnetSeguridad;
+import com.example.sistemaidentidaddigital.decorator.HologramaDecorator;
+import com.example.sistemaidentidaddigital.decorator.MarcaAguaDecorator;
 import com.example.sistemaidentidaddigital.model.Ciudadano;
 import com.example.sistemaidentidaddigital.prototype.CarneDigital;
 import com.example.sistemaidentidaddigital.repository.CiudadanoRepository;
@@ -46,7 +50,15 @@ public class CarneController {
             miCarne.setCedula(ciudadano.getDocumento());
             miCarne.setFechaExpedicion(ciudadano.getFechaExpedicion());
 
-            // 4. APLICACIÓN DEL PATRÓN BRIDGE: Seleccionamos la forma visual
+            // 4. APLICACIÓN DEL PATRÓN DECORATOR: Capas dinámicas de seguridad
+            CarnetSeguridad carnetSeguro = new CarnetBase();
+            carnetSeguro = new MarcaAguaDecorator(carnetSeguro);   // Añade marca de agua
+            carnetSeguro = new HologramaDecorator(carnetSeguro);   // Añade holograma 3D
+
+            // Inyectamos los sellos de seguridad DECORATOR al modelo para que la vista los lea
+            model.addAttribute("sellosSeguridad", carnetSeguro.obtenerSeguridad());
+
+            // 5. APLICACIÓN DEL PATRÓN BRIDGE: Seleccionamos la forma visual
             FormatoCarne formatoElegido;
             if (diseno.equalsIgnoreCase("texto")) {
                 formatoElegido = new FormatoTexto();
@@ -54,7 +66,7 @@ public class CarneController {
                 formatoElegido = new FormatoHTML();
             }
 
-            // 5. Usamos el puente para generar y retornar la vista final
+            // 6. Usamos el puente para generar y retornar la vista final
             CarneBridge puente = new CarneBridge(formatoElegido);
             return puente.generar(model, miCarne);
         }

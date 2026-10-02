@@ -448,3 +448,146 @@ body {
     color: white;
     border: 1px solid #059669;
 }
+
+
+
+
+/* =========================================
+   ESTILOS PARA EL MÓDULO DE CITAS (COMPOSITE)
+   ========================================= */
+
+.tarjeta-citas {
+    display: flex; 
+    flex-direction: column; 
+    width: 100%; 
+    max-width: 800px; 
+    padding: 40px;
+    margin: 0 auto; 
+}
+
+.header-citas { text-align: center; border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 25px; }
+.header-citas h2 { color: #0033a0; margin: 0; font-size: 24px;}
+.header-citas p { color: #666; margin-top: 5px; }
+
+.alerta-exito { background: #d4edda; color: #155724; padding: 12px; border-radius: 5px; margin-bottom: 20px; border-left: 5px solid #28a745; font-weight: bold;}
+.alerta-error { background: #f8d7da; color: #721c24; padding: 12px; border-radius: 5px; margin-bottom: 20px; border-left: 5px solid #dc3545; font-weight: bold;}
+
+.seccion-titulo { color: #0f172a; border-bottom: 2px solid #0f172a; padding-bottom: 5px; }
+
+.requisitos-box { background: #f4f7fb; border: 1px solid #cdd4e0; padding: 25px; border-radius: 8px; margin-bottom: 30px; }
+.requisito-pago { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px dashed #b0b8c4; }
+
+.btn-pse { background-color: #f7a000; color: white; border: none; cursor: pointer; width: 100%; margin-top: 15px; font-weight: bold;}
+.btn-pse:hover { background-color: #e09100; }
+
+.pago-aprobado-box { margin-top: 15px; color: #155724; font-weight: bold; padding: 12px; background: #d4edda; border-radius: 5px; border: 1px solid #c3e6cb; text-align: center;}
+
+.requisito-denuncio { margin-bottom: 25px; background: white; padding: 15px; border-radius: 5px; border: 1px solid #e2e8f0; }
+.requisito-denuncio input { transform: scale(1.2); margin-right: 10px; }
+.requisito-denuncio label { font-weight: bold; color: #333; }
+
+.form-group-cita { display: flex; gap: 20px; margin-bottom: 25px; }
+.form-group-cita div { flex: 1; }
+.form-group-cita label { font-weight: bold; color: #333; }
+.input-cita { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; margin-top: 8px; font-family: inherit;}
+
+.btn-agendar { width: 100%; font-size: 16px; background-color: #0284c7; border:none; cursor:pointer; }
+.btn-agendar:hover { background-color: #0369a1; }
+
+.citas-vacias { padding: 20px; text-align: center; background: #f8f9fa; border-radius: 5px; }
+.citas-vacias p { color: #666; font-style: italic; margin: 0; }
+
+.tabla-citas { width: 100%; border-collapse: collapse; margin-top: 15px; background: white;}
+.tabla-citas th, .tabla-citas td { border: 1px solid #e2e8f0; padding: 15px; text-align: left; }
+.tabla-citas th { background-color: #0f172a; color: white; }
+
+.badge-asignada { background: #10b981; color: white; padding: 6px 12px; border-radius: 12px; font-size: 13px; font-weight: bold; }
+.badge-cancelada { background: #64748b; color: white; padding: 6px 12px; border-radius: 12px; font-size: 13px; font-weight: bold; }
+
+.btn-cancelar { background-color: #ef4444; padding: 8px 12px; font-size: 13px; width: 100%; margin: 0; border: none; cursor: pointer;}
+.btn-cancelar:hover { background-color: #dc2626; }
+.texto-finalizado { color: #94a3b8; font-size: 13px; font-style: italic; }
+
+.footer-citas { margin-top: 30px; text-align: center; }
+.btn-volver { background-color: #64748b; text-decoration: none; border: none; display: inline-block; width: auto; padding: 12px 30px;}
+.btn-volver:hover { background-color: #475569; }
+
+
+
+/* =========================================
+   ESTILOS PARA EL FORMATO IMPRIMIBLE (BRIDGE + DECORATOR)
+   ========================================= */
+
+.body-impresion {
+    font-family: monospace; 
+    padding: 40px; 
+    background-color: white; 
+    color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 90vh;
+}
+
+.contenedor-impresion {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+}
+
+.carnet-impresion { 
+    border: 2px dashed black; 
+    padding: 20px; 
+    width: 100%;
+    background: white;
+    box-sizing: border-box;
+}
+
+.carnet-impresion h3 { 
+    text-align: center; 
+    border-bottom: 1px solid black; 
+    padding-bottom: 10px; 
+    margin-top: 0;
+}
+
+.carnet-impresion .datos p { 
+    font-size: 16px; 
+    margin: 10px 0; 
+}
+
+.carnet-impresion .footer { 
+    font-size: 11px; 
+    text-align: justify; 
+    margin-top: 20px; 
+    border-top: 1px dashed black; 
+    padding-top: 10px;
+}
+
+.seguridad-impresion {
+    font-size: 12px; 
+    border-top: 1px dashed black; 
+    padding-top: 8px; 
+    margin-top: 12px;
+}
+
+.botones { 
+    text-align: center; 
+    margin-top: 20px; 
+    width: 100%;
+}
+
+.botones a { 
+    text-decoration: none; 
+    border: 1px solid black; 
+    padding: 8px 18px; 
+    color: black; 
+    font-family: inherit;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.botones a:hover {
+    background-color: #f1f5f9;
+}
