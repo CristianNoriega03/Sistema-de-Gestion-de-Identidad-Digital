@@ -29,7 +29,7 @@ public class CitaController {
         this.tramiteCitasFacade = tramiteCitasFacade;
     }
 
-    // 1. Mostrar la pantalla de citas (Queda igual)
+    // 1. Mostrar la pantalla de citas 
     @GetMapping("/citas")
     public String gestionarCitas(Authentication authentication, Model model, HttpSession session) {
         String email = authentication.getName();
@@ -51,7 +51,7 @@ public class CitaController {
         return "redirect:/";
     }
 
-    // 2. Simular el pago de PSE (Queda igual)
+    // 2. Simular el pago de PSE 
     @PostMapping("/simular-pago")
     public String simularPago(HttpSession session, Authentication authentication, RedirectAttributes redirectAttributes) {
         String email = authentication.getName();
