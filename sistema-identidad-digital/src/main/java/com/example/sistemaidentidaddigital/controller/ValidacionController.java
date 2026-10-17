@@ -3,6 +3,7 @@ package com.example.sistemaidentidaddigital.controller;
 import com.example.sistemaidentidaddigital.adapter.ValidadorDocumento;
 import com.example.sistemaidentidaddigital.model.Ciudadano;
 import com.example.sistemaidentidaddigital.repository.CiudadanoRepository;
+import com.example.sistemaidentidaddigital.proxy.ValidacionAcceso; // 1. Importamos el proxy
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,10 +16,13 @@ public class ValidacionController {
 
     private final ValidadorDocumento validadorAdapter;
     private final CiudadanoRepository ciudadanoRepository;
+    private final ValidacionAcceso proxySeguridad; // 2. Inyectamos nuestro guardia proxy
 
-    public ValidacionController(ValidadorDocumento validadorAdapter, CiudadanoRepository ciudadanoRepository) {
+    // Añadimos el proxy al constructor
+    public ValidacionController(ValidadorDocumento validadorAdapter, CiudadanoRepository ciudadanoRepository, ValidacionAcceso proxySeguridad) {
         this.validadorAdapter = validadorAdapter;
         this.ciudadanoRepository = ciudadanoRepository;
+        this.proxySeguridad = proxySeguridad;
     }
 
     // Clase interna para asegurar que el HTML pueda leer los datos
@@ -42,6 +46,12 @@ public class ValidacionController {
         if (ciudadanoOpt.isPresent()) {
             Ciudadano ciudadano = ciudadanoOpt.get();
             
+            // 🚨 BARRERA DEL PROXY: Verificamos si tiene el permiso antes de validar
+            if (!proxySeguridad.tieneAcceso(ciudadano.getRol(), "VER_CARNE")) {
+                System.out.println("🚨 PROXY: Bloqueando al rol " + ciudadano.getRol() + " intentando validar el estado.");
+                return "redirect:/?error=AccesoDenegado";
+            }
+
             // Usamos el Adaptador
             boolean estaActiva = validadorAdapter.validarEstadoActivo(ciudadano.getDocumento());
 

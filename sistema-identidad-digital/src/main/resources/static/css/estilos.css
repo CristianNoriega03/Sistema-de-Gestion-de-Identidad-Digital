@@ -591,3 +591,68 @@ body {
 .botones a:hover {
     background-color: #f1f5f9;
 }
+
+
+
+/* =========================================
+   ESTILOS PARA PANELES DE ADMINISTRACIÓN
+   ========================================= */
+.tarjeta-panel {
+    display: block !important; /* Forza a que los elementos vayan hacia abajo, no a los lados */
+    max-width: 600px; /* Tamaño perfecto para el formulario del SuperAdmin */
+    margin: 40px auto;
+    padding: 40px;
+}
+
+.tarjeta-panel-grande {
+    max-width: 900px; /* Más ancho para que quepa la tabla del Admin */
+}
+
+.panel-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.panel-header h1 {
+    color: #0033a0;
+    margin-bottom: 5px;
+}
+
+.panel-header p {
+    color: #666;
+}
+
+.panel-header hr {
+    margin: 20px 0;
+    border: 0;
+    border-top: 1px solid #e0e0e0;
+}
+
+/* Estilos hermosos para la tabla del Admin */
+.tabla-admin {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.tabla-admin th {
+    background-color: #0033a0;
+    color: white;
+    padding: 15px;
+    text-align: left;
+    font-weight: 500;
+}
+
+.tabla-admin td {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    color: #333;
+}
+
+.tabla-admin tr:hover {
+    background-color: #f4f7f6;
+}

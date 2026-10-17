@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel Asesor</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+    <div class="contenedor">
+        <div class="tarjeta tarjeta-panel tarjeta-panel-grande">
+            
+            <div class="panel-header">
+                <h1>Panel de Gestión - Registraduría</h1>
+                <p>Bienvenido Asesor(a) <strong><span th:text="${ciudadano.nombre}"></span></strong>. Aquí puedes auditar todas las citas del sistema.</p>
+                <hr>
+            </div>
+
+            <h3 style="color: #333; margin-bottom: 15px;">Listado General de Citas</h3>
+            
+            <!-- Mensaje de éxito al cancelar una cita -->
+            <div th:if="${mensajeExito}" style="background-color: #d4edda; color: #155724; padding: 10px; border-radius: 5px; text-align: center; margin-bottom: 15px;">
+                <span th:text="${mensajeExito}"></span>
+            </div>
+            
+            <table class="tabla-admin">
+                <thead>
+                    <tr>
+                        <th>Cédula</th>
+                        <th>Ciudadano</th>
+                        <th>Fecha Trámite</th>
+                        <th>Estado</th>
+                        <th style="text-align: center;">Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="cita : ${todasLasCitas}">
+                        <td th:text="${cita.ciudadano.documento}"></td>
+                        <td th:text="${cita.ciudadano.nombre + ' ' + cita.ciudadano.apellido}"></td>
+                        <td th:text="${cita.fecha + ' a las ' + cita.hora}"></td>
+                        <td>
+                            <strong th:text="${cita.estado}" th:style="${cita.estado == 'ASIGNADA' ? 'color: #28a745;' : 'color: #dc3545;'}"></strong>
+                        </td>
+                        <!-- Botón de cancelar -->
+                        <td style="text-align: center;">
+                            <form th:if="${cita.estado == 'ASIGNADA'}" th:action="@{/admin/citas/cancelar/{id}(id=${cita.id})}" method="post" style="margin: 0;">
+                                <button type="submit" class="boton" style="background-color: #dc3545; padding: 6px 12px; font-size: 13px; border: none; cursor: pointer;">Cancelar</button>
+                            </form>
+                            <span th:if="${cita.estado == 'CANCELADA'}" style="color: #888; font-size: 13px; font-style: italic;">No aplica</span>
+                        </td>
+                    </tr>
+                    <!-- Se ajustó el colspan a 5 porque ahora hay 5 columnas -->
+                    <tr th:if="${#lists.isEmpty(todasLasCitas)}">
+                        <td colspan="5" style="text-align: center; color: #666;">El sistema no registra citas activas en este momento.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div style="margin-top: 40px; text-align: center;">
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="boton" style="background-color: #e02a2a; border: none; cursor: pointer; font-size: 16px;">Cerrar sesión</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

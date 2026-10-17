@@ -20,6 +20,7 @@ public class Ciudadano {
     private String telefono;
     private String email;
     private String password;
+    private String rol;
 
     // Getters y Setters
     public Long getId() {
@@ -92,5 +93,13 @@ public class Ciudadano {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRol() {
+        return rol;
+    }
+
+    public void setRol(String rol) {
+        this.rol = rol;
     }
 }

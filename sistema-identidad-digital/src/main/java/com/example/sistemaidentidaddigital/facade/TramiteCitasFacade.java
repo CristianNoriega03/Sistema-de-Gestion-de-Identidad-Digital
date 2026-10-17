@@ -9,6 +9,7 @@ import com.example.sistemaidentidaddigital.repository.CitaRepository;
 import com.example.sistemaidentidaddigital.repository.CiudadanoRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -32,12 +33,19 @@ public class TramiteCitasFacade {
             return new RespuestaFacade(false, "❌ Usuario no encontrado en el sistema.");
         }
 
+        // 🚨 VALIDACIÓN: Evitar que agenden citas en el pasado
+        LocalDate fechaCita = LocalDate.parse(fecha);
+        if (fechaCita.isBefore(LocalDate.now())) {
+            return new RespuestaFacade(false, "❌ Error: No puedes agendar citas en fechas que ya pasaron.");
+        }
+
         // 2. BARRERA DE SEGURIDAD (Evitar doble cita)
         List<Cita> citasExistentes = citaRepository.findByCiudadano(ciudadano);
         boolean yaTieneCita = citasExistentes.stream().anyMatch(c -> c.getEstado().equals("ASIGNADA"));
         if (yaTieneCita) {
             return new RespuestaFacade(false, "❌ No puedes sacar otra cita porque ya tienes un trámite activo.");
         }
+
 
         // 3. APLICACIÓN DEL PATRÓN COMPOSITE (Validar requisitos)
         // el Composite sigue funcionando intacto, pero ahora escondido en la Fachada

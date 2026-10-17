@@ -11,6 +11,7 @@ public class CiudadanoBuilder {
     private String telefono;
     private String email;
     private String password;
+    private String rol = "CIUDADANO"; // Rol por defecto por seguridad
 
     public CiudadanoBuilder conNombre(String nombre) {
         this.nombre = nombre;
@@ -52,6 +53,11 @@ public class CiudadanoBuilder {
         return this;
     }
 
+    public CiudadanoBuilder conRol(String rol) {
+        this.rol = rol;
+        return this;
+    }
+
     public Ciudadano build() {
         Ciudadano ciudadano = new Ciudadano();
         ciudadano.setNombre(this.nombre);
@@ -62,6 +68,7 @@ public class CiudadanoBuilder {
         ciudadano.setTelefono(this.telefono);
         ciudadano.setEmail(this.email);
         ciudadano.setPassword(this.password);
+        ciudadano.setRol(this.rol);
         return ciudadano;
     }
 }

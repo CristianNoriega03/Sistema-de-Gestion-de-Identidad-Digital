@@ -11,6 +11,7 @@ import com.example.sistemaidentidaddigital.decorator.MarcaAguaDecorator;
 import com.example.sistemaidentidaddigital.model.Ciudadano;
 import com.example.sistemaidentidaddigital.prototype.CarneDigital;
 import com.example.sistemaidentidaddigital.repository.CiudadanoRepository;
+import com.example.sistemaidentidaddigital.proxy.ValidacionAcceso; // Importamos el proxy
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,9 +25,12 @@ public class CarneController {
 
     private final CiudadanoRepository ciudadanoRepository;
     private final CarneDigital carneBase; // plantilla en memoria
+    private final ValidacionAcceso proxySeguridad; // NUESTRO GUARDIA PROXY
 
-    public CarneController(CiudadanoRepository ciudadanoRepository) {
+    // Inyectamos el proxy en el constructor
+    public CarneController(CiudadanoRepository ciudadanoRepository, ValidacionAcceso proxySeguridad) {
         this.ciudadanoRepository = ciudadanoRepository;
+        this.proxySeguridad = proxySeguridad;
         // Instanciamos la plantilla pesada UNA SOLA VEZ cuando arranca el controlador
         this.carneBase = new CarneDigital(); 
     }
@@ -41,6 +45,12 @@ public class CarneController {
 
         if (ciudadanoOpt.isPresent()) {
             Ciudadano ciudadano = ciudadanoOpt.get();
+
+            // 🚨 BARRERA DEL PROXY: Verificamos si tiene el permiso antes de armar el carné
+            if (!proxySeguridad.tieneAcceso(ciudadano.getRol(), "VER_CARNE")) {
+                System.out.println("🚨 PROXY: Bloqueando al rol " + ciudadano.getRol() + " intentando ver el carné.");
+                return "redirect:/?error=AccesoDenegado";
+            }
 
             // 2. APLICACIÓN DEL PATRÓN PROTOTYPE: Clonamos la base en lugar de usar 'new'
             CarneDigital miCarne = carneBase.clone();
