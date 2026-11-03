@@ -17,9 +17,23 @@
 
             <h3 style="color: #333; margin-bottom: 15px;">Listado General de Citas</h3>
             
-            <!-- Mensaje de éxito al cancelar una cita -->
+            <!-- BOTÓN DESHACER (PATRÓN COMMAND) -->
+            <div th:if="${hayComandosParaDeshacer != null and hayComandosParaDeshacer}" style="margin-bottom: 15px;">
+                <form th:action="@{/admin/citas/deshacer}" method="post" style="display: inline;">
+                    <button type="submit" class="boton" style="background-color: #ff9800; padding: 8px 15px; font-size: 14px; border: none; cursor: pointer;">
+                        ↩️ Deshacer última cancelación
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Mensaje de éxito al cancelar o deshacer una cita -->
             <div th:if="${mensajeExito}" style="background-color: #d4edda; color: #155724; padding: 10px; border-radius: 5px; text-align: center; margin-bottom: 15px;">
                 <span th:text="${mensajeExito}"></span>
+            </div>
+            
+            <!-- Mensaje de error al intentar deshacer sin comandos previos -->
+            <div th:if="${mensajeError}" style="background-color: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; text-align: center; margin-bottom: 15px;">
+                <span th:text="${mensajeError}"></span>
             </div>
             
             <table class="tabla-admin">
@@ -48,7 +62,6 @@
                             <span th:if="${cita.estado == 'CANCELADA'}" style="color: #888; font-size: 13px; font-style: italic;">No aplica</span>
                         </td>
                     </tr>
-                    <!-- Se ajustó el colspan a 5 porque ahora hay 5 columnas -->
                     <tr th:if="${#lists.isEmpty(todasLasCitas)}">
                         <td colspan="5" style="text-align: center; color: #666;">El sistema no registra citas activas en este momento.</td>
                     </tr>

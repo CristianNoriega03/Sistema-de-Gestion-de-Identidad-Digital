@@ -1,6 +1,10 @@
 package com.example.sistemaidentidaddigital.controller;
 
 import com.example.sistemaidentidaddigital.builder.CiudadanoBuilder;
+import com.example.sistemaidentidaddigital.chain.ValidadorDocumento;
+import com.example.sistemaidentidaddigital.chain.ValidadorEmail;
+import com.example.sistemaidentidaddigital.chain.ValidadorPassword;
+import com.example.sistemaidentidaddigital.chain.ValidadorRegistro;
 import com.example.sistemaidentidaddigital.model.Ciudadano;
 import com.example.sistemaidentidaddigital.repository.CiudadanoRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,7 +32,7 @@ public class RegistroController {
         return "registro"; // Retorna la vista HTML
     }
 
-    @PostMapping("/registro")
+@PostMapping("/registro")
     public String procesarRegistro(
             @RequestParam String nombre,
             @RequestParam String apellido,
@@ -41,23 +45,20 @@ public class RegistroController {
             @RequestParam String confirmarPassword,
             Model model) {
 
-        // Validaciones básicas
-        if (!password.equals(confirmarPassword)) {
-            model.addAttribute("error", "Las contraseñas no coinciden");
-            return "registro";
+        // 1. APLICACIÓN DEL PATRÓN CHAIN OF RESPONSIBILITY
+        // Ensamblamos la cadena de validaciones
+        ValidadorRegistro cadenaValidacion = new ValidadorPassword();
+        cadenaValidacion.setSiguiente(new ValidadorEmail())
+                        .setSiguiente(new ValidadorDocumento());
+
+        // Ejecutamos la cadena
+        boolean esValido = cadenaValidacion.validar(password, confirmarPassword, email, documento, model, ciudadanoRepository);
+        
+        if (!esValido) {
+            return "registro"; // Devuelve la vista con el error correspondiente si la cadena se rompe
         }
 
-        if (ciudadanoRepository.existsByEmail(email)) {
-            model.addAttribute("error", "El correo ya está registrado");
-            return "registro";
-        }
-
-        if (ciudadanoRepository.existsByDocumento(documento)) {
-            model.addAttribute("error", "El documento de identidad ya se encuentra registrado");
-            return "registro";
-        }
-
-        // Construcción del objeto utilizando el patrón Builder
+        // 2. APLICACIÓN DEL PATRÓN BUILDER 
         Ciudadano nuevoCiudadano = new CiudadanoBuilder()
                 .conNombre(nombre)
                 .conApellido(apellido)
@@ -66,10 +67,10 @@ public class RegistroController {
                 .conFechaNacimiento(fechaNacimiento)
                 .conTelefono(telefono)
                 .conEmail(email)
-                .conPassword(passwordEncoder.encode(password)) // Contraseña encriptada
+                .conPassword(passwordEncoder.encode(password))
                 .build();
 
-        // Guardado en base de datos
+        // 3. Guardado en base de datos
         ciudadanoRepository.save(nuevoCiudadano);
 
         return "redirect:/login?registroExitoso";
