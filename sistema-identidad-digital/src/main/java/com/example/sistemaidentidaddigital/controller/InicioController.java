@@ -8,6 +8,11 @@ import com.example.sistemaidentidaddigital.proxy.ValidacionAcceso;
 import com.example.sistemaidentidaddigital.builder.CiudadanoBuilder;
 import com.example.sistemaidentidaddigital.command.GestorComandos;
 
+import com.example.sistemaidentidaddigital.iterator.ColeccionCitas;
+import com.example.sistemaidentidaddigital.iterator.IteradorCitas;
+import com.example.sistemaidentidaddigital.iterator.ListaCitas;
+
+import jakarta.servlet.http.HttpSession; 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -17,9 +22,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Controller
 public class InicioController {
@@ -40,7 +45,16 @@ public class InicioController {
     }
 
     @GetMapping("/")
-    public String inicio(Authentication authentication, Model model) {
+    public String inicio(Authentication authentication, Model model, HttpSession session) {
+        
+        // --- NUEVO: Rescatar la notificación del Factory Method desde la sesión ---
+        Object alerta = session.getAttribute("notificacionFlotante");
+        if (alerta != null) {
+            model.addAttribute("notificacionFlotante", alerta); 
+            session.removeAttribute("notificacionFlotante"); 
+        }
+        // -------------------------------------------------------------------------
+
         String email = authentication.getName();
         Optional<Ciudadano> ciudadanoOpt = ciudadanoRepository.findByEmail(email);
 
@@ -54,14 +68,23 @@ public class InicioController {
                 return "inicio_superadmin"; 
             } else if (proxySeguridad.tieneAcceso(rol, "VER_CITAS_GLOBALES")) {
                 
-                // Filtramos las canceladas
-                List<Cita> citasActivas = ((List<Cita>) citaRepository.findAll()).stream()
-                        .filter(cita -> !cita.getEstado().equals("CANCELADA"))
-                        .collect(Collectors.toList());
+                // --- 2. PATRÓN ITERATOR EN ACCIÓN ---
+                // Obtenemos todas las citas crudas de la BD
+                List<Cita> todasLasCitas = (List<Cita>) citaRepository.findAll();
+                
+                // Las metemos en nuestra colección
+                ColeccionCitas coleccion = new ListaCitas(todasLasCitas);
+                IteradorCitas iterador = coleccion.crearIteradorActivas();
+                
+                // El iterador filtra las canceladas automáticamente al recorrerlas
+                List<Cita> citasActivas = new ArrayList<>();
+                while (iterador.tieneSiguiente()) {
+                    citasActivas.add(iterador.siguiente());
+                }
                 
                 model.addAttribute("todasLasCitas", citasActivas);
                 
-                // ¡ESTA ES LA LÍNEA CLAVE PARA QUE EL HTML NO EXPLOTE!
+                // LÍNEA CLAVE PARA EL COMMAND Y EL BOTÓN DESHACER
                 model.addAttribute("hayComandosParaDeshacer", gestorComandos.hayComandosParaDeshacer());
                 
                 return "inicio_admin"; 

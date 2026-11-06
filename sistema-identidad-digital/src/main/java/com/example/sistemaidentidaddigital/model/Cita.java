@@ -1,5 +1,5 @@
 package com.example.sistemaidentidaddigital.model;
-
+import com.example.sistemaidentidaddigital.memento.CitaMemento;
 import jakarta.persistence.*;
 
 @Entity
@@ -34,4 +34,20 @@ public class Cita {
 
     public Ciudadano getCiudadano() { return ciudadano; }
     public void setCiudadano(Ciudadano ciudadano) { this.ciudadano = ciudadano; }
+
+
+// --- APLICACIÓN DEL PATRÓN MEMENTO ---
+
+    // 1. Crea una cápsula con su estado actual
+    public CitaMemento guardarEstado() {
+        return new CitaMemento(this.fecha, this.hora, this.estado);
+    }
+
+    // 2. Se restaura leyendo la cápsula del pasado
+    public void restaurarEstado(CitaMemento memento) {
+        this.fecha = memento.getFecha();
+        this.hora = memento.getHora();
+        this.estado = memento.getEstado();
+    }
+
 }

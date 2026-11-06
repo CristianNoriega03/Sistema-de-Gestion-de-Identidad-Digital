@@ -1,5 +1,6 @@
 package com.example.sistemaidentidaddigital.command;
 
+import com.example.sistemaidentidaddigital.memento.CitaMemento;
 import com.example.sistemaidentidaddigital.model.Cita;
 import com.example.sistemaidentidaddigital.repository.CitaRepository;
 
@@ -7,7 +8,9 @@ public class CancelarCitaCommand implements Command {
 
     private final Cita cita;
     private final CitaRepository citaRepository;
-    private String estadoAnterior; // Guardamos el estado anterior por si hay que deshacer
+    
+    // EL PATRÓN MEMENTO EN ACCIÓN: Ahora guardamos una foto completa, no un texto
+    private CitaMemento memento;
 
     public CancelarCitaCommand(Cita cita, CitaRepository citaRepository) {
         this.cita = cita;
@@ -16,22 +19,22 @@ public class CancelarCitaCommand implements Command {
 
     @Override
     public void ejecutar() {
-        // 1. Guardamos cómo estaba la cita antes de tocarla
-        this.estadoAnterior = cita.getEstado(); 
+        // 1. Le decimos a la cita que tome una fotografía ANTES de tocarla
+        this.memento = cita.guardarEstado(); 
         
         // 2. Ejecutamos la acción de cancelar
         cita.setEstado("CANCELADA");
         citaRepository.save(cita);
-        System.out.println("Comando Ejecutado: Cita " + cita.getId() + " cancelada exitosamente.");
+        System.out.println("Comando Ejecutado: Cita " + cita.getId() + " cancelada exitosamente. Estado guardado en Memento.");
     }
 
     @Override
     public void deshacer() {
-        // Si nos piden deshacer, restauramos el estado anterior
-        if (estadoAnterior != null) {
-            cita.setEstado(estadoAnterior);
+        // 3. Si nos piden deshacer, le pasamos la fotografía (Memento) a la cita para que se restaure
+        if (this.memento != null) {
+            cita.restaurarEstado(this.memento);
             citaRepository.save(cita);
-            System.out.println("Comando Deshecho: Cita " + cita.getId() + " restaurada a estado: " + estadoAnterior);
+            System.out.println("Comando Deshecho: Cita " + cita.getId() + " restaurada exitosamente desde el Memento.");
         }
     }
 }
