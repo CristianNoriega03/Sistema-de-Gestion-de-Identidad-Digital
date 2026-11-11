@@ -116,13 +116,17 @@
                         <td th:text="${cita.hora}"></td>
                         <td>
                             <span th:if="${cita.estado == 'ASIGNADA'}" class="badge-asignada">Vigente</span>
+                            <!-- Se añade la validación para FINALIZADA -->
+                            <span th:if="${cita.estado == 'FINALIZADA'}" class="badge-asignada" style="background-color: #007bff;">Finalizada</span>
                             <span th:if="${cita.estado == 'CANCELADA'}" class="badge-cancelada">Cancelada</span>
                         </td>
                         <td>
                             <form th:if="${cita.estado == 'ASIGNADA'}" th:action="@{/citas/cancelar/{id}(id=${cita.id})}" method="POST" style="margin: 0;">
                                 <button type="submit" class="boton btn-cancelar">✖ Cancelar</button>
                             </form>
-                            <span th:if="${cita.estado == 'CANCELADA'}" class="texto-finalizado">Finalizado</span>
+                            <!-- Se añaden los textos correctos para citas que ya no están activas -->
+                            <span th:if="${cita.estado == 'CANCELADA'}" class="texto-finalizado" style="color: #dc3545;">Cancelado</span>
+                            <span th:if="${cita.estado == 'FINALIZADA'}" class="texto-finalizado" style="color: #007bff;">Trámite Atendido</span>
                         </td>
                     </tr>
                 </tbody>

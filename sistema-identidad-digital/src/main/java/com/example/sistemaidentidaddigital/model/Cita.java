@@ -1,6 +1,9 @@
 package com.example.sistemaidentidaddigital.model;
 import com.example.sistemaidentidaddigital.memento.CitaMemento;
 import jakarta.persistence.*;
+import com.example.sistemaidentidaddigital.visitor.VisitorCita;
+
+import com.example.sistemaidentidaddigital.state.*;
 
 @Entity
 public class Cita {
@@ -11,7 +14,7 @@ public class Cita {
 
     private String fecha;
     private String hora;
-    private String estado; // Aquí guardaremos "ASIGNADA" o "CANCELADA"
+    private String estado; // Aquí guardaremos "ASIGNADA", "FINALIZADA" o "CANCELADA"
 
     // Relación: Muchos trámites de cita pueden pertenecer a un solo ciudadano
     @ManyToOne
@@ -49,5 +52,45 @@ public class Cita {
         this.hora = memento.getHora();
         this.estado = memento.getEstado();
     }
+
+
+// --- APLICACIÓN DEL PATRÓN STATE ---
+
+    // 1. Atributo temporal (ignorado por BD) que maneja el comportamiento del estado actual
+    @Transient 
+    private EstadoCita estadoComportamiento;
+
+    public void setEstadoComportamiento(EstadoCita estadoComportamiento) {
+        this.estadoComportamiento = estadoComportamiento;
+    }
+
+    // 2. Convierte el texto de la BD en un objeto de estado inteligente
+    public void cargarEstadoComportamiento() {
+        if (this.estado == null || this.estado.equals("ASIGNADA")) {
+            this.estadoComportamiento = new EstadoAsignada();
+        } else if (this.estado.equals("FINALIZADA")) {
+            this.estadoComportamiento = new EstadoFinalizada();
+        } else if (this.estado.equals("CANCELADA")) {
+            this.estadoComportamiento = new EstadoCancelada();
+        }
+    }
+
+    // 3. Delega la acción de cancelar al estado actual (aplica candados)
+    public void procesarCancelacion() {
+        if (this.estadoComportamiento == null) cargarEstadoComportamiento();
+        this.estadoComportamiento.cancelar(this);
+    }
+
+    // 4. Delega la acción de finalizar al estado actual (aplica candados)
+    public void procesarFinalizacion() {
+        if (this.estadoComportamiento == null) cargarEstadoComportamiento();
+        this.estadoComportamiento.finalizar(this);
+    }
+
+
+// --- PATRÓN VISITOR ---
+public void aceptar(VisitorCita visitor) {
+    visitor.visitar(this);
+}
 
 }

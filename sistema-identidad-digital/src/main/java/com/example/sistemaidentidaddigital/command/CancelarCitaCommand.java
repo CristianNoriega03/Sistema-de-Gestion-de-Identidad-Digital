@@ -9,7 +9,7 @@ public class CancelarCitaCommand implements Command {
     private final Cita cita;
     private final CitaRepository citaRepository;
     
-    // EL PATRÓN MEMENTO EN ACCIÓN: Ahora guardamos una foto completa, no un texto
+    // --- APLICACIÓN DEL PATRÓN MEMENTO ---
     private CitaMemento memento;
 
     public CancelarCitaCommand(Cita cita, CitaRepository citaRepository) {
@@ -19,18 +19,20 @@ public class CancelarCitaCommand implements Command {
 
     @Override
     public void ejecutar() {
-        // 1. Le decimos a la cita que tome una fotografía ANTES de tocarla
+        // 1. (Memento) Toma una fotografía ANTES de tocar la cita
         this.memento = cita.guardarEstado(); 
         
-        // 2. Ejecutamos la acción de cancelar
-        cita.setEstado("CANCELADA");
+        // --- APLICACIÓN DEL PATRÓN STATE ---
+        // 2. Ejecutamos la acción delegando la lógica al estado actual (aplica candados)
+        cita.procesarCancelacion(); 
+        
         citaRepository.save(cita);
         System.out.println("Comando Ejecutado: Cita " + cita.getId() + " cancelada exitosamente. Estado guardado en Memento.");
     }
 
     @Override
     public void deshacer() {
-        // 3. Si nos piden deshacer, le pasamos la fotografía (Memento) a la cita para que se restaure
+        // 3. (Memento) Restaura la cita leyendo la cápsula del pasado
         if (this.memento != null) {
             cita.restaurarEstado(this.memento);
             citaRepository.save(cita);

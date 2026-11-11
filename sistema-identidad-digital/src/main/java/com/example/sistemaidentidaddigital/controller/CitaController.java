@@ -10,6 +10,8 @@ import com.example.sistemaidentidaddigital.model.Ciudadano;
 import com.example.sistemaidentidaddigital.repository.CitaRepository;
 import com.example.sistemaidentidaddigital.repository.CiudadanoRepository;
 import com.example.sistemaidentidaddigital.proxy.ValidacionAcceso;
+import com.example.sistemaidentidaddigital.observer.GestorNotificaciones; // Importamos el Observer
+
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,17 +29,18 @@ public class CitaController {
     private final CiudadanoRepository ciudadanoRepository;
     private final TramiteCitasFacade tramiteCitasFacade;
     private final ValidacionAcceso proxySeguridad;
-    private final GestorComandos gestorComandos; // Inyectado por Spring
+    private final GestorComandos gestorComandos;
+    private final GestorNotificaciones notificador; // Inyectamos el Observer
 
-    // Constructor actualizado
     public CitaController(CitaRepository citaRepository, CiudadanoRepository ciudadanoRepository, 
                           TramiteCitasFacade tramiteCitasFacade, ValidacionAcceso proxySeguridad,
-                          GestorComandos gestorComandos) {
+                          GestorComandos gestorComandos, GestorNotificaciones notificador) {
         this.citaRepository = citaRepository;
         this.ciudadanoRepository = ciudadanoRepository;
         this.tramiteCitasFacade = tramiteCitasFacade;
         this.proxySeguridad = proxySeguridad;
         this.gestorComandos = gestorComandos;
+        this.notificador = notificador; // Lo guardamos
     }
 
     @GetMapping("/citas")
@@ -126,9 +129,17 @@ public class CitaController {
         Optional<Cita> citaOpt = citaRepository.findById(id);
         if (citaOpt.isPresent()) {
             Cita cita = citaOpt.get();
-            Command cancelarCmd = new CancelarCitaCommand(cita, citaRepository);
-            gestorComandos.ejecutarComando(cancelarCmd);
-            redirectAttributes.addFlashAttribute("mensaje", "⚠️ Cita cancelada. Tu pago será devuelto.");
+            try {
+                Command cancelarCmd = new CancelarCitaCommand(cita, citaRepository);
+                gestorComandos.ejecutarComando(cancelarCmd);
+                
+                // --- PATRÓN OBSERVER EN ACCIÓN ---
+                notificador.notificarCambio(cita, "CANCELADA");
+
+                redirectAttributes.addFlashAttribute("mensaje", "⚠️ Cita cancelada. Tu pago será devuelto.");
+            } catch (IllegalStateException e) {
+                redirectAttributes.addFlashAttribute("error", "❌ Acción denegada: " + e.getMessage());
+            }
         }
         return "redirect:/citas";
     }
@@ -145,14 +156,21 @@ public class CitaController {
         Optional<Cita> citaOpt = citaRepository.findById(id);
         if (citaOpt.isPresent()) {
             Cita cita = citaOpt.get();
-            Command cancelarCmd = new CancelarCitaCommand(cita, citaRepository);
-            gestorComandos.ejecutarComando(cancelarCmd);
-            redirectAttributes.addFlashAttribute("mensajeExito", "✅ Cita cancelada exitosamente.");
+            try {
+                Command cancelarCmd = new CancelarCitaCommand(cita, citaRepository);
+                gestorComandos.ejecutarComando(cancelarCmd);
+                
+                // --- PATRÓN OBSERVER EN ACCIÓN ---
+                notificador.notificarCambio(cita, "CANCELADA por el Administrador");
+
+                redirectAttributes.addFlashAttribute("mensajeExito", "✅ Cita cancelada exitosamente.");
+            } catch (IllegalStateException e) {
+                redirectAttributes.addFlashAttribute("mensajeError", "❌ Acción denegada: " + e.getMessage());
+            }
         }
         return "redirect:/";
     }
 
-    // ---MÉTODO PARA DESHACER (PATRÓN COMMAND) ---
     @PostMapping("/admin/citas/deshacer")
     public String deshacerCancelacionAdmin(Authentication authentication, RedirectAttributes redirectAttributes) {
         String email = authentication.getName();
@@ -169,4 +187,39 @@ public class CitaController {
         }
         return "redirect:/";
     }
+
+    @GetMapping("/admin/citas/finalizar/{id}")
+    public String finalizarCitaAdmin(@PathVariable Long id, Authentication authentication, RedirectAttributes redirectAttributes) {
+        String email = authentication.getName();
+        Ciudadano administrador = ciudadanoRepository.findByEmail(email).get();
+
+        if (!proxySeguridad.tieneAcceso(administrador.getRol(), "CANCELAR_CUALQUIER_CITA")) {
+            return "redirect:/?error=AccesoDenegado";
+        }
+
+        Optional<Cita> citaOpt = citaRepository.findById(id);
+        if (citaOpt.isPresent()) {
+            Cita cita = citaOpt.get();
+            try {
+                // 1. Patrón State (Valida y finaliza)
+                cita.procesarFinalizacion(); 
+                citaRepository.save(cita);
+                
+                // 2. Patrón Observer (Notifica)
+                notificador.notificarCambio(cita, "FINALIZADA");
+
+                // 3. Patrón Visitor (Genera el reporte HTML de la cita)
+                com.example.sistemaidentidaddigital.visitor.VisitorCita visitanteHtml = 
+                    new com.example.sistemaidentidaddigital.visitor.ReporteAuditoriaHtmlVisitor();
+                cita.aceptar(visitanteHtml);
+
+                redirectAttributes.addFlashAttribute("mensajeExito", "✅ Cita atendida con éxito. Reporte generado en el servidor.");
+            } catch (IllegalStateException e) {
+                redirectAttributes.addFlashAttribute("mensajeError", "❌ Acción denegada: " + e.getMessage());
+            }
+        }
+        return "redirect:/";
+    }
+
+    
 }

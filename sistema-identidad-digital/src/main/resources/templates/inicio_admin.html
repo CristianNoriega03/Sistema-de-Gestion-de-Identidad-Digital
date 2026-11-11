@@ -26,13 +26,13 @@
                 </form>
             </div>
             
-            <!-- Mensaje de éxito al cancelar o deshacer una cita -->
-            <div th:if="${mensajeExito}" style="background-color: #d4edda; color: #155724; padding: 10px; border-radius: 5px; text-align: center; margin-bottom: 15px;">
+            <!-- Mensaje de éxito al cancelar o deshacer una cita (Añadimos clase 'alerta-mensaje') -->
+            <div th:if="${mensajeExito}" class="alerta-mensaje" style="background-color: #d4edda; color: #155724; padding: 10px; border-radius: 5px; text-align: center; margin-bottom: 15px;">
                 <span th:text="${mensajeExito}"></span>
             </div>
             
-            <!-- Mensaje de error al intentar deshacer sin comandos previos -->
-            <div th:if="${mensajeError}" style="background-color: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; text-align: center; margin-bottom: 15px;">
+            <!-- Mensaje de error al intentar deshacer sin comandos previos o por bloqueo de seguridad (Añadimos clase 'alerta-mensaje') -->
+            <div th:if="${mensajeError}" class="alerta-mensaje" style="background-color: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; text-align: center; margin-bottom: 15px;">
                 <span th:text="${mensajeError}"></span>
             </div>
             
@@ -52,13 +52,32 @@
                         <td th:text="${cita.ciudadano.nombre + ' ' + cita.ciudadano.apellido}"></td>
                         <td th:text="${cita.fecha + ' a las ' + cita.hora}"></td>
                         <td>
-                            <strong th:text="${cita.estado}" th:style="${cita.estado == 'ASIGNADA' ? 'color: #28a745;' : 'color: #dc3545;'}"></strong>
+                            <strong th:text="${cita.estado}" 
+                                    th:style="${cita.estado == 'ASIGNADA' ? 'color: #28a745;' : (cita.estado == 'FINALIZADA' ? 'color: #007bff;' : 'color: #dc3545;')}">
+                            </strong>
                         </td>
-                        <!-- Botón de cancelar -->
+                        <!-- Botones de Acción (Atender y Cancelar) -->
                         <td style="text-align: center;">
-                            <form th:if="${cita.estado == 'ASIGNADA'}" th:action="@{/admin/citas/cancelar/{id}(id=${cita.id})}" method="post" style="margin: 0;">
-                                <button type="submit" class="boton" style="background-color: #dc3545; padding: 6px 12px; font-size: 13px; border: none; cursor: pointer;">Cancelar</button>
-                            </form>
+                            <div style="display: flex; justify-content: center; gap: 10px;">
+                                
+                                <!-- Botón Atender: SOLO aparece si está ASIGNADA -->
+                                <a th:if="${cita.estado == 'ASIGNADA'}" 
+                                   th:href="@{/admin/citas/finalizar/{id}(id=${cita.id})}" 
+                                   class="boton" 
+                                   style="background-color: #28a745; padding: 6px 12px; font-size: 13px; text-decoration: none; color: white; border-radius: 4px;">
+                                   Atender
+                                </a>
+                                
+                                <!-- Botón Cancelar: Visible en ASIGNADA y en FINALIZADA (cebo para tu sustentación) -->
+                                <form th:if="${cita.estado == 'ASIGNADA' or cita.estado == 'FINALIZADA'}" 
+                                      th:action="@{/admin/citas/cancelar/{id}(id=${cita.id})}" method="post" style="margin: 0;">
+                                    <button type="submit" class="boton" style="background-color: #dc3545; padding: 6px 12px; font-size: 13px; border: none; cursor: pointer; border-radius: 4px;">
+                                        Cancelar
+                                    </button>
+                                </form>
+
+                            </div>
+                            <!-- Si la cita está cancelada, no mostramos botones -->
                             <span th:if="${cita.estado == 'CANCELADA'}" style="color: #888; font-size: 13px; font-style: italic;">No aplica</span>
                         </td>
                     </tr>
@@ -75,5 +94,15 @@
             </div>
         </div>
     </div>
+
+    <!-- Script para ocultar los mensajes de alerta después de 5 segundos -->
+    <script>
+        setTimeout(function() {
+            var alertas = document.querySelectorAll('.alerta-mensaje');
+            alertas.forEach(function(alerta) {
+                alerta.style.display = 'none';
+            });
+        }, 5000); // 5000 ms = 5 segundos
+    </script>
 </body>
 </html>
