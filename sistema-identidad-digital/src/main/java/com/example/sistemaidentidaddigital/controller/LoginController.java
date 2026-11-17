@@ -24,6 +24,10 @@ public class LoginController {
     @Autowired
     private CiudadanoRepository ciudadanoRepository;
 
+    public LoginController(CiudadanoRepository ciudadanoRepository) {
+        this.ciudadanoRepository = ciudadanoRepository;
+    }
+
     @GetMapping("/login")
     public String login(HttpSession session, Model model) {
         Object notificacion = session.getAttribute("notificacionFlotante");
