@@ -10,7 +10,9 @@ import com.example.sistemaidentidaddigital.model.Ciudadano;
 import com.example.sistemaidentidaddigital.repository.CitaRepository;
 import com.example.sistemaidentidaddigital.repository.CiudadanoRepository;
 import com.example.sistemaidentidaddigital.proxy.ValidacionAcceso;
-import com.example.sistemaidentidaddigital.observer.GestorNotificaciones; // Importamos el Observer
+import com.example.sistemaidentidaddigital.observer.GestorNotificaciones;
+import com.example.sistemaidentidaddigital.template.GestorCitaTemplate;
+import com.example.sistemaidentidaddigital.template.CitaEstandarRegistraduria;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -30,7 +32,7 @@ public class CitaController {
     private final TramiteCitasFacade tramiteCitasFacade;
     private final ValidacionAcceso proxySeguridad;
     private final GestorComandos gestorComandos;
-    private final GestorNotificaciones notificador; // Inyectamos el Observer
+    private final GestorNotificaciones notificador;
 
     public CitaController(CitaRepository citaRepository, CiudadanoRepository ciudadanoRepository, 
                           TramiteCitasFacade tramiteCitasFacade, ValidacionAcceso proxySeguridad,
@@ -40,7 +42,7 @@ public class CitaController {
         this.tramiteCitasFacade = tramiteCitasFacade;
         this.proxySeguridad = proxySeguridad;
         this.gestorComandos = gestorComandos;
-        this.notificador = notificador; // Lo guardamos
+        this.notificador = notificador;
     }
 
     @GetMapping("/citas")
@@ -106,7 +108,10 @@ public class CitaController {
         Boolean pago = (Boolean) session.getAttribute("pagoAprobado");
         boolean pagoAprobado = (pago != null && pago);
 
-        RespuestaFacade respuesta = tramiteCitasFacade.agendarNuevaCita(email, fecha, hora, confirmarDenuncio, pagoAprobado);
+        // --- APLICACIÓN DEL PATRÓN TEMPLATE METHOD ---
+        // Utilizamos la plantilla para estructurar y ejecutar el flujo seguro de agendamiento
+        GestorCitaTemplate gestorCitaTemplate = new CitaEstandarRegistraduria(tramiteCitasFacade);
+        RespuestaFacade respuesta = gestorCitaTemplate.procesarFlujoCita(email, fecha, hora, confirmarDenuncio, pagoAprobado);
 
         if (respuesta.isExito()) {
             session.removeAttribute("pagoAprobado");
@@ -220,6 +225,4 @@ public class CitaController {
         }
         return "redirect:/";
     }
-
-    
 }

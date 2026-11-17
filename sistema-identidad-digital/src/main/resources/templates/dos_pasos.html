@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seguridad 2FA</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+
+<div class="contenedor">
+    <div class="tarjeta">
+        
+        <!-- Lado izquierdo: logo -->
+        <div class="lado-logo">
+            <img th:src="@{/images/logo.png}" alt="Logo del Sistema" class="logo">
+            <h1>Sistema de</h1>
+            <h1>Identidad Digital</h1>
+            <p>Acceso seguro a servicios gubernamentales</p>
+        </div>
+
+        <!-- Lado derecho: formulario 2FA -->
+        <div class="lado-login">
+            <h2>Verificación 2FA</h2>
+            <p class="subtitulo">Por seguridad, confirma tu identidad</p>
+
+            <form th:action="@{/login/enviar-codigo}" method="post" style="margin-top: 20px;">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                
+                <p style="font-weight: bold; margin-bottom: 10px;">¿Cómo deseas recibir tu código?</p>
+
+                <div class="campo" style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; border: 1px solid #ddd; margin-bottom: 20px;">
+                    <div style="margin-bottom: 15px;">
+                        <input type="radio" id="opcionSms" name="metodoElegido" value="SMS" required checked>
+                        <label for="opcionSms" style="cursor: pointer; display: inline; font-weight: normal; margin-left: 5px;">
+                            📱 Mensaje (SMS) al <strong th:text="${telefonoCensurado}">***0000</strong>
+                        </label>
+                    </div>
+
+                    <div>
+                        <input type="radio" id="opcionEmail" name="metodoElegido" value="EMAIL">
+                        <label for="opcionEmail" style="cursor: pointer; display: inline; font-weight: normal; margin-left: 5px;">
+                            📧 Correo a <strong th:text="${emailCensurado}">c***o@ejemplo.com</strong>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- UN SOLO INPUT OCULTO FUERA DE LAS OPCIONES PARA EVITAR EL ERROR DE LA COMA -->
+                <input type="hidden" name="destinoReal" id="destinoOculto">
+
+                <button type="submit" class="boton">Enviar Código</button>
+            </form>
+
+            <div class="registro">
+                <a href="/login/cancelar-2fa" style="color: #d9534f;">Cancelar y volver al inicio</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // Este script inyecta únicamente el valor seleccionado al input oculto
+    const radioSms = document.getElementById('opcionSms');
+    const radioEmail = document.getElementById('opcionEmail');
+    const destinoOculto = document.getElementById('destinoOculto');
+
+    const telReal = '[[${telefonoReal}]]';
+    const emailReal = '[[${emailReal}]]';
+
+    // Eventos al hacer clic en los radios
+    radioSms.addEventListener('change', () => destinoOculto.value = telReal);
+    radioEmail.addEventListener('change', () => destinoOculto.value = emailReal);
+    
+    // Valor por defecto al cargar la página
+    if (radioSms.checked) {
+        destinoOculto.value = telReal;
+    } else {
+        destinoOculto.value = emailReal;
+    }
+</script>
+
+</body>
+</html>

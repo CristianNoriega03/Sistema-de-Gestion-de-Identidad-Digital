@@ -30,7 +30,7 @@ public class LoginAuthenticationHandler implements AuthenticationSuccessHandler,
         mediador.notificarEvento("EXITO", authentication.getName(), request.getSession());
         
         // Redirigimos a la página de inicio
-        response.sendRedirect("/");
+        response.sendRedirect("/dos-pasos");
     }
 
     @Override
